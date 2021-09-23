@@ -1,8 +1,10 @@
 import os
-from flask import Flask, request
-import flask.scaffold
-from werkzeug.datastructures import FileStorage
 import random
+import flask.scaffold
+import pythoncom
+from flask import Flask, request
+from werkzeug.datastructures import FileStorage
+from win32com import client as wc
 
 flask.helpers._endpoint_from_view_func = flask.scaffold._endpoint_from_view_func
 from flask_restplus import Api, Resource, fields
@@ -11,6 +13,7 @@ app = Flask(__name__)
 api = Api(app, title="FileParserAPI", description="APIs for file parser server")
 load_file_ns = api.namespace('LoadFile', description="Api for uploading files", path='/')
 word_parser_ns = api.namespace('WordParser', description="Apis for Word file parser", path='/')
+
 
 # 定义上传文件类型及保存路径
 pwd = os.path.dirname(__file__)
@@ -26,19 +29,42 @@ upload_parser.add_argument('file', location='files',
 token_dict = dict()
 
 
-@load_file_ns.route('/load_file')
-class load_file(Resource):
-    '''
+@load_file_ns.route('/LoadFile')
+class LoadFile(Resource):
+    """
     上传doc、docx、wps、pdf文件并返回唯一标识符
     返回数据类型：{"code":0, "msg":"Uploaded successfully", "data":{"token":（6位数字）}}
-    '''
+    """
 
-    def isValidFile(self, filename):
+    @staticmethod
+    def is_valid_file(filename):
         if filename.split(".")[-1] in ALLOWED_EXTENSIONS:
             return True
         return False
 
-    def tokenInitializer(self):
+    @staticmethod
+    def format_transfer(file_path, b_delete_origin_file=True):
+        """
+        将文件形式转换为特定形式
+        注：需要windows机环境并装有office word
+        """
+        # doc -> docx
+        if file_path.endswith("doc"):
+            # win32程序初始化
+            pythoncom.CoInitialize()
+            word = wc.Dispatch("Word.Application")
+            doc = word.Documents.Open(file_path)
+            rename = os.path.splitext(file_path)[0] + ".docx"
+            doc.SaveAs(os.path.abspath(os.path.join(file_path, rename)), 12)  # 12表示docx格式
+            doc.Close()
+            word.Quit()
+        else:
+            return
+        if b_delete_origin_file:
+            os.remove(file_path)
+
+    @staticmethod
+    def token_initializer():
         code = []
         for i in range(6):
             code.append(str(random.randint(0, 9)))
@@ -48,11 +74,12 @@ class load_file(Resource):
     def post(self):
         args = upload_parser.parse_args()
         uploaded_file = args['file']
-        if self.isValidFile(uploaded_file.filename):
-            uploaded_file.save(os.path.join(UPLOAD_FOLDER, uploaded_file.filename))
-            key = int
+        if self.is_valid_file(uploaded_file.filename):
+            file_save_path = os.path.join(UPLOAD_FOLDER, uploaded_file.filename)
+            uploaded_file.save(os.path.join(file_save_path))
+            self.format_transfer(file_save_path)
             while True:
-                temp = self.tokenInitializer()
+                temp = self.token_initializer()
                 if not (temp in token_dict.keys()):
                     token_dict[temp] = uploaded_file.filename
                     key = temp
@@ -63,13 +90,14 @@ class load_file(Resource):
 
 
 @word_parser_ns.route('/word_parser/<token>/all_paragraphs')
-class parse_all_paragraphs(Resource):
-    '''
+class ParseAllParagraphs(Resource):
+    """
     获取到指定token的文档中全部段落信息
     返回数据类型：{ “code”：0， “msg”：“Parsed all paragraphs successfully”, “data”：[{ “paragraphText”：“概述”， “paragraphId”:1},……]}
-    '''
+    """
 
-    def parse_all_paragraphs(self, filename):
+    @staticmethod
+    def parse_all_paragraphs(filename):
         data = []
         with open(os.path.join(UPLOAD_FOLDER, filename), 'r') as f:
             # TODO
@@ -85,11 +113,11 @@ class parse_all_paragraphs(Resource):
 
 
 @word_parser_ns.route('/word_parser/<token>/all_tables')
-class parse_all_tables(Resource):
-    '''
+class ParseAllTables(Resource):
+    """
     获取到指定token的文档中全部表格信息
     返回数据类型：{ “code”：0， “msg”：“Parsed all tables successfully”, “data”：[{“textBefore”：“表格如下：”，“docParagraphs”:[{“paragraphText”：“序号”，“paragraphId”:88 }]……},……]}
-    '''
+    """
 
     def parse_all_tables(self, filename):
         data = []
@@ -107,13 +135,13 @@ class parse_all_tables(Resource):
 
 
 @word_parser_ns.route('/word_parser/<token>/all_pics')
-class parse_all_pics(Resource):
-    '''
+class ParseAllPics(Resource):
+    """
     获取到指定token的文档中全部图片信息
     返回数据类型：{ “code”：0， “msg”：“Parsed all pictures successfully”, “data”：[{“textBefore”：“图片如下：”， “height”:220 ……},……]}
-    '''
-
-    def parse_all_pics(self, filename):
+    """
+    @staticmethod
+    def parse_all_pics(filename):
         data = []
         with open(os.path.join(UPLOAD_FOLDER, filename), 'r') as f:
             # TODO
@@ -129,13 +157,14 @@ class parse_all_pics(Resource):
 
 
 @word_parser_ns.route('/word_parser/<token>/all_titles')
-class parse_all_titles(Resource):
-    '''
+class ParseAllTitles(Resource):
+    """
     获取到指定token的文档中全部标题信息
     返回数据类型：{ “code”：0， “msg”：“Parsed all titles successfully”, “data”：[{“paragraphText”：“1、引言”， “paragraphId”:1， “lvl”：1 ……},……]}
-    '''
+    """
 
-    def parse_all_titles(self, filename):
+    @staticmethod
+    def parse_all_titles(filename):
         data = []
         with open(os.path.join(UPLOAD_FOLDER, filename), 'r') as f:
             # TODO
@@ -151,13 +180,14 @@ class parse_all_titles(Resource):
 
 
 @word_parser_ns.route('/word_parser/<token>/paragraph/<paragraph_id>')
-class parse_paragraph_by_id(Resource):
-    '''
+class ParseParagraphById(Resource):
+    """
     获取到指定token的文档中指定paragraph_id的段落下的详细信息
     返回数据类型：{ “code”：0， “msg”：“Parsed paragraph by id successfully”, “data”：{“paragraphText”：“概述”，“paragraphId”:1 ……}}
-    '''
+    """
 
-    def parse_paragraph_by_id(self, filename, pid):
+    @staticmethod
+    def parse_paragraph_by_id(filename, pid):
         data = []
         with open(os.path.join(UPLOAD_FOLDER, filename), 'r') as f:
             # TODO
@@ -176,13 +206,14 @@ class parse_paragraph_by_id(Resource):
 
 
 @word_parser_ns.route('/word_parser/<token>/paragraph/<paragraph_id>/paragraph_stype')
-class parse_paragraph_stype_by_id(Resource):
-    '''
+class ParseParagraphStypeById(Resource):
+    """
     获取到指定token的文档中指定paragraph_id的段落下的详细段落格式信息
     返回数据类型：{ “code”：0， “msg”：“Parsed paragraph stype by id successfully”, “data”：“paragraphId”:1,“lvl”：1,“indentFromLeft”：2……}}
-    '''
+    """
 
-    def parse_paragraph_stype_by_id(self, filename, pid):
+    @staticmethod
+    def parse_paragraph_stype_by_id(filename, pid):
         data = []
         with open(os.path.join(UPLOAD_FOLDER, filename), 'r') as f:
             # TODO
@@ -201,13 +232,14 @@ class parse_paragraph_stype_by_id(Resource):
 
 
 @word_parser_ns.route('/word_parser/<token>/paragraph/<paragraph_id>/font_stype')
-class parse_paragraph_font_stype_by_id(Resource):
-    '''
+class ParseParagraphFontStypeById(Resource):
+    """
     获取到指定token的文档中指定paragraph_id的段落下的详细字体格式信息
     返回数据类型：{ “code”：0， “msg”：“Parsed paragraph font stype by id successfully”, “data”：[{“paragraphId”:1, “paragrapText”：“中国”, “lvl”：1, “fontAlignment”：2, “fontSize”：28 ……,……]}
-    '''
+    """
 
-    def parse_paragraph_font_stype_by_id(self, filename, pid):
+    @staticmethod
+    def parse_paragraph_font_stype_by_id(filename, pid):
         data = []
         with open(os.path.join(UPLOAD_FOLDER, filename), 'r') as f:
             # TODO
@@ -226,13 +258,13 @@ class parse_paragraph_font_stype_by_id(Resource):
 
 
 @word_parser_ns.route('/word_parser/<token>/title/<paragraph_id>/all_paragraphs')
-class parse_paragraph_by_title_id(Resource):
-    '''
+class ParseParagraphByTitleId(Resource):
+    """
     获取到指定token的文档中指定paragraph_id的标题下的全部段落信息
     返回数据类型：{ “code”：0， “msg”：“Parsed paragraph by title id successfully”, “data”：[{“paragraphText”：“概述”, “paragraphId”:1……},……]}
-    '''
-
-    def parse_paragraph_by_title_id(self, filename, pid):
+    """
+    @staticmethod
+    def parse_paragraph_by_title_id(filename, pid):
         data = []
         with open(os.path.join(UPLOAD_FOLDER, filename), 'r') as f:
             # TODO
@@ -251,13 +283,14 @@ class parse_paragraph_by_title_id(Resource):
 
 
 @word_parser_ns.route('/word_parser/<token>/title/<paragraph_id>/all_pics')
-class parse_paragraph_pics_by_title_id(Resource):
-    '''
+class ParseParagraphPicsByTitleId(Resource):
+    """
     获取到指定token的文档中指定paragraph_id的标题下的全部图片信息
     返回数据类型：{ “code”：0， “msg”：“Parsed paragraph pictures by title id successfully”, “data”：[{“textBefore”：“图片如下：”， “height”:220……},……]}
-    '''
+    """
 
-    def parse_paragraph_pics_by_title_id(self, filename, pid):
+    @staticmethod
+    def parse_paragraph_pics_by_title_id(filename, pid):
         data = []
         with open(os.path.join(UPLOAD_FOLDER, filename), 'r') as f:
             # TODO
@@ -276,13 +309,14 @@ class parse_paragraph_pics_by_title_id(Resource):
 
 
 @word_parser_ns.route('/word_parser/<token>/title/<paragraph_id>/all_tables')
-class parse_paragraph_tables_by_title_id(Resource):
-    '''
+class ParseParagraphTablesByTitleId(Resource):
+    """
     获取到指定token的文档中指定paragraph_id的标题下的全部表格信息
     返回数据类型：{ “code”：0， “msg”：“Parsed paragraph tables by title id successfully”, “data”：[{“textBefore”：“表格如下：”，“docParagraphs”:[{“paragraphText”：“序号”，“paragraphId”:88}]……},……]}
-    '''
+    """
 
-    def parse_paragraph_tables_by_title_id(self, filename, pid):
+    @staticmethod
+    def parse_paragraph_tables_by_title_id(filename, pid):
         data = []
         with open(os.path.join(UPLOAD_FOLDER, filename), 'r') as f:
             # TODO
@@ -301,10 +335,10 @@ class parse_paragraph_tables_by_title_id(Resource):
 
 
 @word_parser_ns.route('/word_parser/<token>')
-class delete_file(Resource):
-    '''
+class DeleteFile(Resource):
+    """
     删除指定token文档的内容
-    '''
+    """
 
     def delete_file(self, filename):
         # TODO
@@ -312,7 +346,7 @@ class delete_file(Resource):
 
     def delete(self, token):
         if token in token_dict.keys():
-            delete_file(token_dict[token])
+            DeleteFile(token_dict[token])
             return {"code": 0, "msg": "success", "data": {"result": "true"}}, 200
         else:
             return {"code": 1, "msg": "Invalid token", "data": []}, 400
