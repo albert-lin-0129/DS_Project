@@ -5,6 +5,7 @@ import pythoncom
 from flask import Flask, request
 from werkzeug.datastructures import FileStorage
 from win32com import client as wc
+import docx_utils
 
 flask.helpers._endpoint_from_view_func = flask.scaffold._endpoint_from_view_func
 from flask_restplus import Api, Resource, fields
