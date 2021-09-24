@@ -123,11 +123,11 @@ class ParseAllTables(Resource):
     """
 
     @staticmethod
-    def parse_all_tables(self, filename):
-        data = []
-        with open(os.path.join(UPLOAD_FOLDER, filename), 'r') as f:
-            # TODO
-            pass
+    def parse_all_tables(filename):
+        utils = factory.Factory.get_utils(filename)
+        file_path = os.path.join(UPLOAD_FOLDER, filename)
+        file = utils.get_file(file_path)
+        data = utils.parse_all_tables(file)
         return data
 
     def get(self, token):
@@ -146,10 +146,10 @@ class ParseAllPics(Resource):
     """
     @staticmethod
     def parse_all_pics(filename):
-        data = []
-        with open(os.path.join(UPLOAD_FOLDER, filename), 'r') as f:
-            # TODO
-            pass
+        utils = factory.Factory.get_utils(filename)
+        file_path = os.path.join(UPLOAD_FOLDER, filename)
+        file = utils.get_file(file_path)
+        data = utils.parse_all_pic(file)
         return data
 
     def get(self, token):
@@ -169,10 +169,10 @@ class ParseAllTitles(Resource):
 
     @staticmethod
     def parse_all_titles(filename):
-        data = []
-        with open(os.path.join(UPLOAD_FOLDER, filename), 'r') as f:
-            # TODO
-            pass
+        utils = factory.Factory.get_utils(filename)
+        file_path = os.path.join(UPLOAD_FOLDER, filename)
+        file = utils.get_file(file_path)
+        data = utils.parse_all_titles(file)
         return data
 
     def get(self, token):
@@ -192,10 +192,10 @@ class ParseParagraphById(Resource):
 
     @staticmethod
     def parse_paragraph_by_id(filename, pid):
-        data = []
-        with open(os.path.join(UPLOAD_FOLDER, filename), 'r') as f:
-            # TODO
-            pass
+        utils = factory.Factory.get_utils(filename)
+        file_path = os.path.join(UPLOAD_FOLDER, filename)
+        file = utils.get_file(file_path)
+        data = utils.parse_paragraph_by_id(file, pid)
         return data
 
     def get(self, token, paragraph_id):
@@ -209,19 +209,19 @@ class ParseParagraphById(Resource):
             return {"code": 1, "msg": "Invalid token", "data": []}, 400
 
 
-@word_parser_ns.route('/word_parser/<token>/paragraph/<paragraph_id>/paragraph_stype')
-class ParseParagraphStypeById(Resource):
+@word_parser_ns.route('/word_parser/<token>/paragraph/<paragraph_id>/paragraphs_type')
+class ParseParagraphsTypeById(Resource):
     """
     获取到指定token的文档中指定paragraph_id的段落下的详细段落格式信息
-    返回数据类型：{ “code”：0， “msg”：“Parsed paragraph stype by id successfully”, “data”：“paragraphId”:1,“lvl”：1,“indentFromLeft”：2……}}
+    返回数据类型：{ “code”：0， “msg”：“Parsed paragraphs type by id successfully”, “data”：“paragraphId”:1,“lvl”：1,“indentFromLeft”：2……}}
     """
 
     @staticmethod
-    def parse_paragraph_stype_by_id(filename, pid):
-        data = []
-        with open(os.path.join(UPLOAD_FOLDER, filename), 'r') as f:
-            # TODO
-            pass
+    def parse_paragraphs_type_by_id(filename, pid):
+        utils = factory.Factory.get_utils(filename)
+        file_path = os.path.join(UPLOAD_FOLDER, filename)
+        file = utils.get_file(file_path)
+        data = utils.parse_paragraphs_type_by_id(file, pid)
         return data
 
     def get(self, token, paragraph_id):
@@ -235,19 +235,19 @@ class ParseParagraphStypeById(Resource):
             return {"code": 1, "msg": "Invalid token", "data": []}, 400
 
 
-@word_parser_ns.route('/word_parser/<token>/paragraph/<paragraph_id>/font_stype')
-class ParseParagraphFontStypeById(Resource):
+@word_parser_ns.route('/word_parser/<token>/paragraph/<paragraph_id>/fonts_type')
+class ParseParagraphFontsTypeById(Resource):
     """
     获取到指定token的文档中指定paragraph_id的段落下的详细字体格式信息
-    返回数据类型：{ “code”：0， “msg”：“Parsed paragraph font stype by id successfully”, “data”：[{“paragraphId”:1, “paragrapText”：“中国”, “lvl”：1, “fontAlignment”：2, “fontSize”：28 ……,……]}
+    返回数据类型：{ “code”：0， “msg”：“Parsed paragraph fonts type by id successfully”, “data”：[{“paragraphId”:1, “paragrapText”：“中国”, “lvl”：1, “fontAlignment”：2, “fontSize”：28 ……,……]}
     """
 
     @staticmethod
-    def parse_paragraph_font_stype_by_id(filename, pid):
-        data = []
-        with open(os.path.join(UPLOAD_FOLDER, filename), 'r') as f:
-            # TODO
-            pass
+    def parse_paragraph_fonts_type_by_id(filename, pid):
+        utils = factory.Factory.get_utils(filename)
+        file_path = os.path.join(UPLOAD_FOLDER, filename)
+        file = utils.get_file(file_path)
+        data = utils.parse_paragraph_fonts_type_by_id(file, pid)
         return data
 
     def get(self, token, paragraph_id):
@@ -269,10 +269,10 @@ class ParseParagraphByTitleId(Resource):
     """
     @staticmethod
     def parse_paragraph_by_title_id(filename, pid):
-        data = []
-        with open(os.path.join(UPLOAD_FOLDER, filename), 'r') as f:
-            # TODO
-            pass
+        utils = factory.Factory.get_utils(filename)
+        file_path = os.path.join(UPLOAD_FOLDER, filename)
+        file = utils.get_file(file_path)
+        data = utils.parse_paragraph_by_title_id(file, pid)
         return data
 
     def get(self, token, paragraph_id):
@@ -295,10 +295,10 @@ class ParseParagraphPicsByTitleId(Resource):
 
     @staticmethod
     def parse_paragraph_pics_by_title_id(filename, pid):
-        data = []
-        with open(os.path.join(UPLOAD_FOLDER, filename), 'r') as f:
-            # TODO
-            pass
+        utils = factory.Factory.get_utils(filename)
+        file_path = os.path.join(UPLOAD_FOLDER, filename)
+        file = utils.get_file(file_path)
+        data = utils.parse_paragraph_pics_by_title_id(file, pid)
         return data
 
     def get(self, token, paragraph_id):
@@ -321,10 +321,10 @@ class ParseParagraphTablesByTitleId(Resource):
 
     @staticmethod
     def parse_paragraph_tables_by_title_id(filename, pid):
-        data = []
-        with open(os.path.join(UPLOAD_FOLDER, filename), 'r') as f:
-            # TODO
-            pass
+        utils = factory.Factory.get_utils(filename)
+        file_path = os.path.join(UPLOAD_FOLDER, filename)
+        file = utils.get_file(file_path)
+        data = utils.parse_paragraph_pics_by_title_id(file, pid)
         return data
 
     def get(self, token, paragraph_id):
