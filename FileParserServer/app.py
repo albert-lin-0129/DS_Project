@@ -5,7 +5,9 @@ import pythoncom
 from flask import Flask, request
 from werkzeug.datastructures import FileStorage
 from win32com import client as wc
-import docx_utils
+import docxUtils
+import factory
+import utilsInterface
 
 flask.helpers._endpoint_from_view_func = flask.scaffold._endpoint_from_view_func
 from flask_restplus import Api, Resource, fields
@@ -99,10 +101,10 @@ class ParseAllParagraphs(Resource):
 
     @staticmethod
     def parse_all_paragraphs(filename):
-        data = []
-        with open(os.path.join(UPLOAD_FOLDER, filename), 'r') as f:
-            # TODO
-            pass
+        utils = factory.Factory.get_utils(filename)
+        file_path = os.path.join(UPLOAD_FOLDER, filename)
+        file = utils.get_file(file_path)
+        data = utils.parse_all_paragraphs(file)
         return data
 
     def get(self, token):
@@ -120,6 +122,7 @@ class ParseAllTables(Resource):
     返回数据类型：{ “code”：0， “msg”：“Parsed all tables successfully”, “data”：[{“textBefore”：“表格如下：”，“docParagraphs”:[{“paragraphText”：“序号”，“paragraphId”:88 }]……},……]}
     """
 
+    @staticmethod
     def parse_all_tables(self, filename):
         data = []
         with open(os.path.join(UPLOAD_FOLDER, filename), 'r') as f:
