@@ -149,7 +149,7 @@ class ParseAllPics(Resource):
         utils = factory.Factory.get_utils(filename)
         file_path = os.path.join(UPLOAD_FOLDER, filename)
         file = utils.get_file(file_path)
-        data = utils.parse_all_pic(file)
+        data = utils.parse_all_pics(file)
         return data
 
     def get(self, token):
@@ -324,7 +324,7 @@ class ParseParagraphTablesByTitleId(Resource):
         utils = factory.Factory.get_utils(filename)
         file_path = os.path.join(UPLOAD_FOLDER, filename)
         file = utils.get_file(file_path)
-        data = utils.parse_paragraph_pics_by_title_id(file, pid)
+        data = utils.parse_paragraph_tables_by_title_id(file, pid)
         return data
 
     def get(self, token, paragraph_id):

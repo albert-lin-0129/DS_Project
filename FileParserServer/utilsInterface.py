@@ -17,30 +17,6 @@ class UtilsInterface:
         pass
 
     @staticmethod
-    def parse_paragraph_by_title_id(file, pid):
-        """
-        需要返回一个字典，里面key是标题特征，value是内容
-        """
-        # TODO
-        pass
-
-    @staticmethod
-    def parse_paragraph_pics_by_title_id(file, pid):
-        """
-        需要返回一个字典，里面key是图片特征，value是内容
-        """
-        # TODO
-        pass
-
-    @staticmethod
-    def parse_paragraph_tables_by_title_id(file, pid):
-        """
-        需要返回一个字典，里面key是表格特征，value是内容
-        """
-        # TODO
-        pass
-
-    @staticmethod
     def parse_paragraph_by_id(file, pid):
         """
         需要返回一个字典，里面key是特征，value是内容
@@ -85,6 +61,30 @@ class UtilsInterface:
         """
         需要返回一个file，就是解析后的一个类，之后传入每一个方法中
         docx就是Document类
+        """
+        # TODO
+        pass
+
+    @staticmethod
+    def parse_paragraph_by_title_id(file, pid):
+        """
+        需要返回一个字典类型的数组，里面key是标题特征，value是内容
+        """
+        # TODO
+        pass
+
+    @staticmethod
+    def parse_paragraph_pics_by_title_id(file, pid):
+        """
+        需要返回一个字典类型的数组，里面key是图片特征，value是内容
+        """
+        # TODO
+        pass
+
+    @staticmethod
+    def parse_paragraph_tables_by_title_id(file, pid):
+        """
+        需要返回一个字典类型的数组，里面key是表格特征，value是内容
         """
         # TODO
         pass
