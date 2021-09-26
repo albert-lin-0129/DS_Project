@@ -212,7 +212,7 @@ class ParseParagraphById(Resource):
         if token in token_dict.keys():
             try:
                 return {"code": 0, "msg": "Parsed paragraph by id successfully",
-                        "data": self.parse_paragraph_by_id(token_dict[token], paragraph_id)}, 200
+                        "data": self.parse_paragraph_by_id(token_dict[token], int(paragraph_id))}, 200
             except:
                 return {"code": 1, "msg": "Invalid paragraph id", "data": []}, 400
         else:
@@ -238,7 +238,7 @@ class ParseParagraphsTypeById(Resource):
         if token in token_dict.keys():
             try:
                 return {"code": 0, "msg": "Parsed paragraph stype by id successfully",
-                        "data": self.parse_paragraph_stype_by_id(token_dict[token], paragraph_id)}, 200
+                        "data": self.parse_paragraph_stype_by_id(token_dict[token], int(paragraph_id))}, 200
             except:
                 return {"code": 1, "msg": "Invalid paragraph id", "data": []}, 400
         else:
@@ -264,7 +264,7 @@ class ParseParagraphFontsTypeById(Resource):
         if token in token_dict.keys():
             try:
                 return {"code": 0, "msg": "Parsed paragraph font stype by id successfully",
-                        "data": self.parse_paragraph_font_stype_by_id(token_dict[token], paragraph_id)}, 200
+                        "data": self.parse_paragraph_font_stype_by_id(token_dict[token], int(paragraph_id))}, 200
             except:
                 return {"code": 1, "msg": "Invalid paragraph id", "data": []}, 400
         else:
@@ -284,13 +284,14 @@ class ParseParagraphByTitleId(Resource):
         file_path = os.path.join(UPLOAD_FOLDER, filename)
         file = utils.get_file(file_path)
         data = utils.parse_paragraph_by_title_id(file, pid)
+
         return data
 
     def get(self, token, paragraph_id):
         if token in token_dict.keys():
             try:
                 return {"code": 0, "msg": "Parsed paragraph by title id successfully",
-                        "data": self.parse_paragraph_by_title_id(token_dict[token], paragraph_id)}, 200
+                        "data": self.parse_paragraph_by_title_id(token_dict[token], int(paragraph_id))}, 200
             except:
                 return {"code": 1, "msg": "Invalid paragraph id", "data": []}, 400
         else:
@@ -316,7 +317,7 @@ class ParseParagraphPicsByTitleId(Resource):
         if token in token_dict.keys():
             try:
                 return {"code": 0, "msg": "Parsed paragraph pictures by title id successfully",
-                        "data": self.parse_paragraph_pics_by_title_id(token_dict[token], paragraph_id)}, 200
+                        "data": self.parse_paragraph_pics_by_title_id(token_dict[token], int(paragraph_id))}, 200
             except:
                 return {"code": 1, "msg": "Invalid paragraph id", "data": []}, 400
         else:
@@ -342,7 +343,7 @@ class ParseParagraphTablesByTitleId(Resource):
         if token in token_dict.keys():
             try:
                 return {"code": 0, "msg": "Parsed paragraph tables by title id successfully",
-                        "data": self.parse_paragraph_tables_by_title_id(token_dict[token], paragraph_id)}, 200
+                        "data": self.parse_paragraph_tables_by_title_id(token_dict[token], int(paragraph_id))}, 200
             except:
                 return {"code": 1, "msg": "Invalid paragraph id", "data": []}, 400
         else:

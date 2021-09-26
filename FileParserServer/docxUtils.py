@@ -86,7 +86,7 @@ class DocxUtils(utilsInterface.UtilsInterface):
         paragraphs_info = DocxUtils.parse_all_paragraphs(file)
         titles_indexes = DocxUtils.get_titles(file)
         length = len(titles_indexes)
-        last_index = 0
+        last_index = len(paragraphs_info)
         for i in range(0, length):
             if titles_indexes[i] == pid:
                 if i != length - 1:
@@ -297,7 +297,8 @@ class DocxUtils(utilsInterface.UtilsInterface):
 
 if __name__ == '__main__':
     filePath = os.path.join(UPLOAD_FOLDER, "test.docx")
-    print(DocxUtils.parse_all_titles(DocxUtils.get_file(filePath)))
+    # print(DocxUtils.parse_all_titles(DocxUtils.get_file(filePath)))
+    print(DocxUtils.parse_paragraph_by_title_id(DocxUtils.get_file(filePath), 3))
     # aimages = DocxUtils.get_images(DocxUtils.get_file(filePath))
     # atable = DocxUtils.parse_tables_by_table_id(DocxUtils.get_file(filePath), 0)
     # print(DocxUtils.parse_tables_by_table_id(DocxUtils.get_file(filePath), 0))
