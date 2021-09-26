@@ -238,7 +238,7 @@ class ParseParagraphsTypeById(Resource):
         if token in token_dict.keys():
             try:
                 return {"code": 0, "msg": "Parsed paragraph stype by id successfully",
-                        "data": self.parse_paragraph_stype_by_id(token_dict[token], int(paragraph_id))}, 200
+                        "data": self.parse_paragraphs_type_by_id(token_dict[token], int(paragraph_id))}, 200
             except:
                 return {"code": 1, "msg": "Invalid paragraph id", "data": []}, 400
         else:
@@ -264,7 +264,7 @@ class ParseParagraphFontsTypeById(Resource):
         if token in token_dict.keys():
             try:
                 return {"code": 0, "msg": "Parsed paragraph font stype by id successfully",
-                        "data": self.parse_paragraph_font_stype_by_id(token_dict[token], int(paragraph_id))}, 200
+                        "data": self.parse_paragraph_fonts_type_by_id(token_dict[token], int(paragraph_id))}, 200
             except:
                 return {"code": 1, "msg": "Invalid paragraph id", "data": []}, 400
         else:
