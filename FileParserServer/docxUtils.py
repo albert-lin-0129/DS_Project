@@ -1,7 +1,7 @@
 import os
 from docx import Document
-import utilsInterface
-import Para_table_image_extraction
+from FileParserServer import utilsInterface
+from FileParserServer import Para_table_image_extraction
 import pandas as pd
 
 pwd = os.path.dirname(__file__)

@@ -1,4 +1,4 @@
-import docxUtils
+from FileParserServer import docxUtils
 
 
 class Factory:
@@ -7,6 +7,3 @@ class Factory:
         s = filename.split('.')
         if s[1] == "docx":
             return docxUtils.DocxUtils
-        if s[1] == "pdf":
-            pass
-

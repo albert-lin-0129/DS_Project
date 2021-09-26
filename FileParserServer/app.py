@@ -5,9 +5,10 @@ import pythoncom
 from flask import Flask, request
 from werkzeug.datastructures import FileStorage
 from win32com import client as wc
-import docxUtils
-import factory
-import utilsInterface
+from FileParserServer import docxUtils
+from FileParserServer import factory
+from FileParserServer import utilsInterface
+from FileParserServer.pdfToDocx import PDF2Word
 
 flask.helpers._endpoint_from_view_func = flask.scaffold._endpoint_from_view_func
 from flask_restplus import Api, Resource, fields
@@ -15,13 +16,12 @@ from flask_restplus import Api, Resource, fields
 app = Flask(__name__)
 api = Api(app, title="FileParserAPI", description="APIs for file parser server")
 load_file_ns = api.namespace('LoadFile', description="Api for uploading files", path='/')
-word_parser_ns = api.namespace('WordParser', description="Apis for Word file parser", path='/')
-
+word_parser_ns = api.namespace('Parser', description="Apis for Word file parser", path='/')
 
 # 定义上传文件类型及保存路径
 pwd = os.path.dirname(__file__)
 ALLOWED_EXTENSIONS = {'doc', 'docx', 'wps', 'pdf'}
-UPLOAD_FOLDER = os.path.join(pwd, 'WPWPOI/files')
+UPLOAD_FOLDER = os.path.join(pwd, 'WPWPOI/files/')
 
 # 文件上传参数
 upload_parser = api.parser()
@@ -53,7 +53,7 @@ class LoadFile(Resource):
         """
         # doc -> docx
         if file_path.endswith("doc"):
-            # win32程序初始化
+            #win32程序初始化
             pythoncom.CoInitialize()
             word = wc.Dispatch("Word.Application")
             doc = word.Documents.Open(file_path)
@@ -61,6 +61,14 @@ class LoadFile(Resource):
             doc.SaveAs(os.path.abspath(os.path.join(file_path, rename)), 12)  # 12表示docx格式
             doc.Close()
             word.Quit()
+        # pdf -> docx
+        elif file_path.endswith("pdf"):
+            pdf2word = PDF2Word()
+            try:
+                pdf2word.convertPDF(file_path, UPLOAD_FOLDER)
+            except:
+                print("pdf2word crawler failed")
+                pdf2word.pdf2docx(file_path, str(file_path).split(".")[0] + ".docx")
         else:
             return
         if b_delete_origin_file:
@@ -84,9 +92,10 @@ class LoadFile(Resource):
             while True:
                 temp = self.token_initializer()
                 if not (temp in token_dict.keys()):
-                    token_dict[temp] = uploaded_file.filename
+                    token_dict[temp] = uploaded_file.filename.split(".")[0] + ".docx"
                     key = temp
                     break
+            print(token_dict)
             return {"code": 0, "msg": "Uploaded successfully", "data": {"token": key}}, 200
         else:
             return {"code": 1, "msg": "Uploaded failed", "data": {}}, 400
@@ -144,6 +153,7 @@ class ParseAllPics(Resource):
     获取到指定token的文档中全部图片信息
     返回数据类型：{ “code”：0， “msg”：“Parsed all pictures successfully”, “data”：[{“textBefore”：“图片如下：”， “height”:220 ……},……]}
     """
+
     @staticmethod
     def parse_all_pics(filename):
         utils = factory.Factory.get_utils(filename)
@@ -267,6 +277,7 @@ class ParseParagraphByTitleId(Resource):
     获取到指定token的文档中指定paragraph_id的标题下的全部段落信息
     返回数据类型：{ “code”：0， “msg”：“Parsed paragraph by title id successfully”, “data”：[{“paragraphText”：“概述”, “paragraphId”:1……},……]}
     """
+
     @staticmethod
     def parse_paragraph_by_title_id(filename, pid):
         utils = factory.Factory.get_utils(filename)
@@ -345,12 +356,15 @@ class DeleteFile(Resource):
     """
 
     def delete_file(self, filename):
-        # TODO
-        pass
+        file_path = os.path.join(UPLOAD_FOLDER, filename)
+        print("removing" + file_path)
+        os.remove(file_path)
+
 
     def delete(self, token):
         if token in token_dict.keys():
-            DeleteFile(token_dict[token])
+            self.delete_file(token_dict[token])
+            del token_dict[token]
             return {"code": 0, "msg": "success", "data": {"result": "true"}}, 200
         else:
             return {"code": 1, "msg": "Invalid token", "data": []}, 400
