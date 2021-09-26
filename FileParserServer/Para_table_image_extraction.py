@@ -169,6 +169,13 @@ def get_combine_dataframe():
     return combined_df
 
 
+def dataframe2list(dataframe):
+    res = []
+    for line in dataframe.values:
+        res.append(list(line))
+    return res
+
+
 if __name__ == '__main__':
     get_combine_dataframe()
 
