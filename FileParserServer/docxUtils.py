@@ -268,9 +268,9 @@ class DocxUtils(utilsInterface.UtilsInterface):
         image_index = 0
         for info in sort_array:
             if is_in_title:
-                if sort_array[0].lower().__contains__("image"):
+                if sort_array[0][0].lower().__contains__("image"):
                     res.append(images[image_index])
-            if sort_array[0].lower().__contains__("image"):
+            if sort_array[0][0].lower().__contains__("image"):
                 image_index += 1
                 continue
             if info[3] >= index:
@@ -300,7 +300,7 @@ class DocxUtils(utilsInterface.UtilsInterface):
 if __name__ == '__main__':
     filePath = os.path.join(UPLOAD_FOLDER, "test.docx")
     # print(DocxUtils.parse_all_titles(DocxUtils.get_file(filePath)))
-    print(DocxUtils.parse_paragraph_by_title_id(DocxUtils.get_file(filePath), 3))
+    print(DocxUtils.parse_paragraph_pics_by_title_id(DocxUtils.get_file(filePath), 3))
     # aimages = DocxUtils.get_images(DocxUtils.get_file(filePath))
     # atable = DocxUtils.parse_tables_by_table_id(DocxUtils.get_file(filePath), 0)
     # print(DocxUtils.parse_tables_by_table_id(DocxUtils.get_file(filePath), 0))
