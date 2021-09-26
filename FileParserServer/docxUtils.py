@@ -43,14 +43,14 @@ class DocxUtils(utilsInterface.UtilsInterface):
     def get_titles(file):
         titles = []
         font_sizes = []
-        context_size = 1000
+        context_size = 2147000000
         for p in DocxUtils.get_paragraphs(file):
             runs = p.runs
             font_size = 0
             for run in runs:
                 if run.font is not None and run.font.size is not None:
-                    context_size = min(context_size, run.font.size.pt)
-                    font_size = max(font_size, run.font.size.pt)
+                    context_size = min(context_size, run.font.size)
+                    font_size = max(font_size, run.font.size)
             font_sizes.append(font_size)
 
         index = 0
@@ -109,7 +109,7 @@ class DocxUtils(utilsInterface.UtilsInterface):
         res["left_indent"] = paragraph_format.left_indent
         res["line_spacing"] = paragraph_format.line_spacing
         if paragraph_format.line_spacing is not None:
-            res["line_spacing"] = paragraph_format.line_spacing.pt
+            res["line_spacing"] = paragraph_format.line_spacing
         return res
 
     @staticmethod
@@ -124,7 +124,7 @@ class DocxUtils(utilsInterface.UtilsInterface):
                 res["paragraphFont"] = run.font.name
                 res["fontSize"] = run.font.size
                 if run.font.size is not None:
-                    res["fontSize"] = run.font.size.pt
+                    res["fontSize"] = run.font.size
                 res["fontItalic"] = run.font.italic
                 res["fontColor"] = run.font.color.rgb
                 res["fontBold"] = run.font.bold
@@ -265,17 +265,19 @@ class DocxUtils(utilsInterface.UtilsInterface):
         res = []
         is_in_title = False
         index = 0
-        image_index = -1
+        image_index = 0
         for info in sort_array:
+            if is_in_title:
+                if sort_array[0].lower().__contains__("image"):
+                    res.append(images[image_index])
             if sort_array[0].lower().__contains__("image"):
                 image_index += 1
+                continue
             if info[3] >= index:
                 is_in_title = True
             if info[3] >= last_index:
                 break
-            if is_in_title:
-                if sort_array[0].lower().__contains__("image"):
-                    res.append(images[image_index])
+
         return res
         pass
 
@@ -304,7 +306,7 @@ if __name__ == '__main__':
     # print(DocxUtils.parse_tables_by_table_id(DocxUtils.get_file(filePath), 0))
     #
     # for image in aimages:
-    #     print(image["height"].pt)
+    #     print(image["height"])
     # print(DocxUtils.parse_all_paragraphs(DocxUtils.get_file(filePath)))
     # print(DocxUtils.parse_paragraph_by_id(DocxUtils.get_file(filePath), 0))
     # print(combined_df, '\n')
