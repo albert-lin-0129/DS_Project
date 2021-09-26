@@ -1,4 +1,4 @@
-from FileParserServer import docxUtils
+import docxUtils
 
 
 class Factory:

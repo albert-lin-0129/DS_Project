@@ -28,7 +28,7 @@ import base64
 
 
 #Load the docx file into document object. You can input your own docx file in this step by changing the input path below:
-document = Document('WPWPOI/files/test.docx')
+document = None
 
 
 
@@ -93,11 +93,11 @@ def get_combine_dataframe():
     # The combined_df dataframe will store all the content in document order including images, tables and paragraphs.
     # If the content is an image or a table, it has to be referenced from image_df for images and table_list for tables using the corresponding image or table id that is stored in combined_df
     # And if the content is paragraph, the paragraph text will be stored in combined_df
-    combined_df = pd.DataFrame(columns=['para_text', 'table_id', 'style'])
+    combined_df = pd.DataFrame(columns=['para_text', 'table_id', 'style', 'size'])
     table_mod = pd.DataFrame(columns=['string_value', 'table_id'])
 
     # The image_df will consist of base64 encoded image data of all the images in the document
-    image_df = pd.DataFrame(columns=['image_index', 'image_rID', 'image_filename', 'image_base64_string'])
+    image_df = pd.DataFrame(columns=['image_index', 'image_rID', 'image_filename', 'image_base64_string', 'size'])
 
     # The table_list is a list consisting of all the tables in the document
     table_list = []
@@ -146,7 +146,7 @@ def get_combine_dataframe():
                         image_base64 = image_base64.decode()
                         dftemp = pd.DataFrame(
                             {'image_index': [imagecounter], 'image_rID': [embed_attr], 'image_filename': [name_attr],
-                             'image_base64_string': [image_base64]})
+                             'image_base64_string': [image_base64], 'size': [0]})
                         image_df = image_df.append(dftemp, sort=False)
                         style = 'Novalue'
                     imagecounter = imagecounter + 1
@@ -157,26 +157,31 @@ def get_combine_dataframe():
             appendtxt = str(block)
             tabid = i
             dfs = read_docx_tables(tab_id=i)
-            dftemp = pd.DataFrame({'para_text': [appendtxt], 'table_id': [i], 'style': [style]})
+            dftemp = pd.DataFrame({'para_text': [appendtxt], 'table_id': [i], 'style': [style], 'size': [0]})
             table_mod = table_mod.append(dftemp, sort=False)
             table_list.append(dfs)
             i = i + 1
         if isappend:
-            dftemp = pd.DataFrame({'para_text': [appendtxt], 'table_id': [tabid], 'style': [style]})
+            if appendtxt.lower().__contains__("image"):
+                dftemp = pd.DataFrame({'para_text': [appendtxt], 'table_id': [tabid], 'style': [style], 'size': [0]})
+            else:
+                dftemp = pd.DataFrame({'para_text': [appendtxt], 'table_id': [tabid], 'style': [style], 'size': [1]})
+
             combined_df = combined_df.append(dftemp, sort=False)
 
     # print(combined_df)
-    return combined_df
+    return dataframe2list(combined_df)
 
 
 def dataframe2list(dataframe):
     res = []
     for line in dataframe.values:
-        res.append(list(line))
+        if list(line)[0] != '':
+            res.append(list(line))
     return res
 
 
 if __name__ == '__main__':
-    get_combine_dataframe()
+    print(get_combine_dataframe())
 
 

@@ -5,10 +5,10 @@ import pythoncom
 from flask import Flask, request
 from werkzeug.datastructures import FileStorage
 from win32com import client as wc
-from FileParserServer import docxUtils
-from FileParserServer import factory
-from FileParserServer import utilsInterface
-from FileParserServer.pdfToDocx import PDF2Word
+import docxUtils
+import factory
+import utilsInterface
+from pdfToDocx import PDF2Word
 
 flask.helpers._endpoint_from_view_func = flask.scaffold._endpoint_from_view_func
 from flask_restplus import Api, Resource, fields

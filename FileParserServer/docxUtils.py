@@ -1,12 +1,11 @@
 import os
 from docx import Document
-from FileParserServer import utilsInterface
-from FileParserServer import Para_table_image_extraction
-import pandas as pd
+import utilsInterface
+import Para_table_image_extraction
 
 pwd = os.path.dirname(__file__)
 UPLOAD_FOLDER = os.path.join(pwd, 'WPWPOI/files')
-combined_df = pd.DataFrame(columns=['para_text', 'table_id', 'style'])
+sort_array = []
 
 
 class DocxUtils(utilsInterface.UtilsInterface):
@@ -25,16 +24,18 @@ class DocxUtils(utilsInterface.UtilsInterface):
     @staticmethod
     def get_paragraphs(file):
         paragraphs = []
+        global sort_array
         for p in file.paragraphs:
             if p.text != "":
                 paragraphs.append(p)
-
-        # TODO 要根据排序后的算法进行比较并且做paragraph的排序
-
-        # offset = 0
-        # for index in range(0, len(file.tables)):
-        #     for value in combined_df.values:
-        #         if value[""]
+        offset = 0
+        for i in range(0, len(sort_array)):
+            if sort_array[i][1] != 'Novalue':
+                t_p = DocxUtils.get_table_paragraphs(file, int(sort_array[i][1]))
+                sort_array[i][3] = len(t_p)
+                for p in t_p:
+                    paragraphs.insert(i + offset, p)
+                    offset += 1
 
         return paragraphs
 
@@ -44,14 +45,13 @@ class DocxUtils(utilsInterface.UtilsInterface):
         font_sizes = []
         context_size = 1000
         for p in DocxUtils.get_paragraphs(file):
-            if p.text != "":
-                runs = p.runs
-                for run in runs:
-                    if run.font is not None and run.font.size is not None:
-                        context_size = min(context_size, run.font.size.pt)
-                        font_sizes.append(run.font.size.pt)
-                    else:
-                        font_sizes.append(0)
+            runs = p.runs
+            font_size = 0
+            for run in runs:
+                if run.font is not None and run.font.size is not None:
+                    context_size = min(context_size, run.font.size.pt)
+                    font_size = max(font_size, run.font.size.pt)
+            font_sizes.append(font_size)
 
         index = 0
         for p in DocxUtils.get_paragraphs(file):
@@ -211,9 +211,8 @@ class DocxUtils(utilsInterface.UtilsInterface):
         # res = []
         # for index in range(0, len(file.tables)):
         #     res.append(DocxUtils.parse_tables_by_pics_id(file, index))
-        res = DocxUtils.get_images(DocxUtils.get_file(filePath))
+        res = DocxUtils.get_images(file)
         return res
-        pass
 
     @staticmethod
     def parse_all_titles(file):
@@ -234,8 +233,8 @@ class DocxUtils(utilsInterface.UtilsInterface):
         """
         file = Document(path)
         Para_table_image_extraction.document = file
-        global combined_df
-        combined_df = Para_table_image_extraction.get_combine_dataframe()
+        global sort_array
+        sort_array = Para_table_image_extraction.get_combine_dataframe()
         return file
 
     @staticmethod
@@ -261,7 +260,23 @@ class DocxUtils(utilsInterface.UtilsInterface):
         """
         需要返回一个字典类型的数组，里面key是图片特征，value是内容
         """
-        # TODO 要根据dataFrame排序后的算法进行比较并且做paragraph的排序
+        images = DocxUtils.get_images(file)
+        last_index = DocxUtils.get_title_last_index(file, pid)
+        res = []
+        is_in_title = False
+        index = 0
+        image_index = -1
+        for info in sort_array:
+            if sort_array[0].lower().__contains__("image"):
+                image_index += 1
+            if info[3] >= index:
+                is_in_title = True
+            if info[3] >= last_index:
+                break
+            if is_in_title:
+                if sort_array[0].lower().__contains__("image"):
+                    res.append(images[image_index])
+        return res
         pass
 
     @staticmethod
@@ -269,6 +284,7 @@ class DocxUtils(utilsInterface.UtilsInterface):
         """
         需要返回一个字典类型的数组，里面key是表格特征，value是内容
         """
+
         tables = DocxUtils.parse_all_tables(file)
         last_index = DocxUtils.get_title_last_index(file, pid)
         res = []
@@ -281,13 +297,14 @@ class DocxUtils(utilsInterface.UtilsInterface):
 
 if __name__ == '__main__':
     filePath = os.path.join(UPLOAD_FOLDER, "test.docx")
-    aimages = DocxUtils.get_images(DocxUtils.get_file(filePath))
+    print(DocxUtils.parse_all_titles(DocxUtils.get_file(filePath)))
+    # aimages = DocxUtils.get_images(DocxUtils.get_file(filePath))
     # atable = DocxUtils.parse_tables_by_table_id(DocxUtils.get_file(filePath), 0)
     # print(DocxUtils.parse_tables_by_table_id(DocxUtils.get_file(filePath), 0))
     #
     # for image in aimages:
     #     print(image["height"].pt)
-    # # print(DocxUtils.parse_all_paragraphs(DocxUtils.get_file(filePath)))
+    # print(DocxUtils.parse_all_paragraphs(DocxUtils.get_file(filePath)))
     # print(DocxUtils.parse_paragraph_by_id(DocxUtils.get_file(filePath), 0))
     # print(combined_df, '\n')
 
