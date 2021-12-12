@@ -28,8 +28,9 @@ import base64
 
 
 #Load the docx file into document object. You can input your own docx file in this step by changing the input path below:
+# document = Document("WPWPOI/files/test.docx")
+# 运行flask时改成None这个
 document = None
-
 
 
 
