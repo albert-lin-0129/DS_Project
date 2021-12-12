@@ -356,11 +356,11 @@ class DeleteFile(Resource):
     删除指定token文档的内容
     """
 
-    def delete_file(self, filename):
+    @staticmethod
+    def delete_file(filename):
         file_path = os.path.join(UPLOAD_FOLDER, filename)
         print("removing" + file_path)
         os.remove(file_path)
-
 
     def delete(self, token):
         if token in token_dict.keys():
