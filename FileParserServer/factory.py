@@ -7,3 +7,7 @@ class Factory:
         s = filename.split('.')
         if s[1] == "docx":
             return docxUtils.DocxUtils
+
+    @staticmethod
+    def get_docx():
+        return docxUtils.DocxUtils
