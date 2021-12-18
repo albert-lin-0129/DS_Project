@@ -12,13 +12,16 @@ import relation
 pwd = os.path.dirname(__file__)
 DATA_FOLDER = os.path.join(pwd, 'WPWPOI/data')
 UPLOAD_FOLDER = os.path.join(pwd, 'WPWPOI/files')
-
+CUSTOM_DICT_FOLDER = os.path.join(pwd, 'CustomDict')
 
 class GraphParser:
 
     def __init__(self):
         # 默认加载 Small 模型
         self.ltp = LTP()
+        for f_name in os.listdir(CUSTOM_DICT_FOLDER):
+            filePath = os.path.join(CUSTOM_DICT_FOLDER, f_name)
+            self.ltp.init_dict(filePath)
         # 分词 [['他', '叫', '汤姆', '去', '拿', '外衣', '。']]
         self.seg = []
         # 词性标注 [['r', 'v', 'nh', 'v', 'v', 'n', 'wp']]
@@ -63,7 +66,7 @@ class GraphParser:
         # return dep
 
     def entity_extraction(self):
-        print("解析entity")
+        print("解析entity......")
         for i in range(len(self.seg)):
             for j in range(len(self.seg[i])):
                 if self.pos[i][j] == "wp":
@@ -84,7 +87,7 @@ class GraphParser:
         #         tag, start, end = ent
 
     def relation_extraction(self):
-        print("解析relation")
+        print("解析relation......")
         for i in range(len(self.srl)):
             for j in range(len(self.srl[i])):
                 rel = relation.Relation()
@@ -126,6 +129,9 @@ class GraphParser:
                 # for ent in ent_list:
                 #     des, start, end = ent
                 #     print(des, ":", "".join(self.seg[i][start:end + 1]))
+
+    def relation_exception(self):
+        pass
 
     def construct_graph(self, g_name, parse_str):
         self.parse(parse_str)
