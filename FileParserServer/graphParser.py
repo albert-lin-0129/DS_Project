@@ -41,6 +41,8 @@ class GraphParser:
         # ]
         self.sdp = []
         self.hidden = None
+        self.relation_dic = {}
+        self.entity_dic = {}
 
     def parse(self, parse_str):
         self.seg, self.hidden = self.ltp.seg(parse_str)
@@ -60,22 +62,66 @@ class GraphParser:
         # return dep
 
     def entity_extraction(self):
+        print("解析entity")
+        for i in range(len(self.seg)):
+            for j in range(len(self.seg[i])):
+                if self.pos[i][j] == "wp":
+                    continue
+                entity_obj = entity.Entity()
+                name = self.seg[i][j]
+                tag = self.pos[i][j]
+                entity_obj.name = name
+                entity_obj.tag = tag
+                self.entity_dic[name] = entity_obj
+                # tag, start, end = ent
+                # rel = relation.Relation()
+                # print(tag, ":", "".join(self.seg[i][start:end + 1]))
 
-        for i in range(len(self.ner)):
-            ner_list = self.ner[i]
-            for entity in ner_list:
-                tag, start, end = entity
-                print(tag, ":", "".join(self.seg[i][start:end + 1]))
+        # for i in range(len(self.sdp)):
+        #     sdp_list = self.sdp[i]
+        #     for ent in sdp_list:
+        #         tag, start, end = ent
 
     def relation_extraction(self):
+        print("解析relation")
         for i in range(len(self.srl)):
-            every_srl = self.srl[i]
-            for srl_ent in every_srl:
-                print(self.seg[i][srl_ent[0]])
-                ent_list = srl_ent[1]
-                for ent in ent_list:
-                    des, start, end = ent
-                    print(des, ":", "".join(self.seg[i][start:end + 1]))
+            for j in range(len(self.srl[i])):
+                rel = relation.Relation()
+                rel.name = self.seg[i][self.srl[i][j][0]]
+                for ent in self.srl[i][j][1]:
+                    tag, start, end = ent
+                    key = self.seg[i][start]
+                    if self.entity_dic.__contains__(key):
+                        if tag == "A0":
+                            rel.the_first_e_id = self.entity_dic[key].e_id
+                        if tag == "A1":
+                            rel.the_second_e_id = self.entity_dic[key].e_id
+                    else:
+                        continue
+                    self.relation_dic[rel.name] = rel
+
+        for i in range(len(self.sdp)):
+            for j in range(len(self.sdp[i])):
+                start, end, tag = self.sdp[i][j]
+                rel = relation.Relation()
+                rel.name = tag
+                key = self.seg[i][start - 1]
+                if self.entity_dic.__contains__(key):
+                    rel.the_first_e_id = self.entity_dic[key].e_id
+                    rel.the_second_e_id = self.entity_dic[key].e_id
+                else:
+                    continue
+                self.relation_dic[rel.name] = rel
+
+        for rel_key in self.relation_dic.keys():
+            if self.entity_dic.__contains__(rel_key):
+                del self.entity_dic[rel_key]
+
+                # print(self.seg[i][srl_ent[0]])
+                # ent_list = srl_ent[1]
+                # for ent in ent_list:
+                #     des, start, end = ent
+                #     print(des, ":", "".join(self.seg[i][start:end + 1]))
 
 
 class Word2VecParser:
@@ -103,6 +149,11 @@ if __name__ == '__main__':
         parser_str.append(p.text)
 
     parser.parse(parser_str)
+    parser.entity_extraction()
+    parser.relation_extraction()
+    print(parser.entity_dic)
+    print(parser.relation_dic)
+
     # for i in range(len(seg)):
     #     seg_ent = seg[i]
     #     for j in range(len(seg_ent)):
