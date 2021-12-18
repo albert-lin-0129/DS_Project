@@ -9,3 +9,6 @@ class Entity:
         self.name = ""
         self.category = ""
         self.tag = ""
+
+    def __str__(self):
+        return "id: " + str(self.id) + ", name: " + self.name + ", category: " + self.category + ", tag: " + self.tag

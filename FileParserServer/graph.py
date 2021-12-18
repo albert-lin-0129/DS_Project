@@ -7,3 +7,4 @@ class Graph:
 
         self.relations = {}
         self.entity = {}
+        self.name = ""

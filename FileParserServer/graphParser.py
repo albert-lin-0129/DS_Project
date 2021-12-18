@@ -43,6 +43,7 @@ class GraphParser:
         self.hidden = None
         self.relation_dic = {}
         self.entity_dic = {}
+        self.graph = graph.Graph()
 
     def parse(self, parse_str):
         self.seg, self.hidden = self.ltp.seg(parse_str)
@@ -93,25 +94,28 @@ class GraphParser:
                     key = self.seg[i][start]
                     if self.entity_dic.__contains__(key):
                         if tag == "A0":
-                            rel.the_first_e_id = self.entity_dic[key].e_id
+                            rel.the_first_e_id = self.entity_dic[key].id
                         if tag == "A1":
-                            rel.the_second_e_id = self.entity_dic[key].e_id
+                            rel.the_second_e_id = self.entity_dic[key].id
                     else:
                         continue
-                    self.relation_dic[rel.name] = rel
+                    self.relation_dic[rel.id] = rel
 
         for i in range(len(self.sdp)):
             for j in range(len(self.sdp[i])):
                 start, end, tag = self.sdp[i][j]
                 rel = relation.Relation()
                 rel.name = tag
+                if tag.lower() == "root":
+                    continue
+
                 key = self.seg[i][start - 1]
                 if self.entity_dic.__contains__(key):
-                    rel.the_first_e_id = self.entity_dic[key].e_id
-                    rel.the_second_e_id = self.entity_dic[key].e_id
+                    rel.the_first_e_id = self.entity_dic[key].id
+                    rel.the_second_e_id = self.entity_dic[key].id
                 else:
                     continue
-                self.relation_dic[rel.name] = rel
+                self.relation_dic[rel.id] = rel
 
         for rel_key in self.relation_dic.keys():
             if self.entity_dic.__contains__(rel_key):
@@ -122,6 +126,19 @@ class GraphParser:
                 # for ent in ent_list:
                 #     des, start, end = ent
                 #     print(des, ":", "".join(self.seg[i][start:end + 1]))
+
+    def construct_graph(self, g_name, parse_str):
+        self.parse(parse_str)
+        self.entity_extraction()
+        self.relation_extraction()
+        self.graph.g_name = g_name
+        self.graph.entity = self.entity_dic
+        self.relation_dic = self.relation_dic
+        # for entity_key in parser.entity_dic:
+        #     print(str(entity_key) + ": " + str(parser.entity_dic[entity_key]))
+        # for relation_key in parser.relation_dic:
+        #     print(str(relation_key) + ": " + str(parser.relation_dic[relation_key]))
+        return graph
 
 
 class Word2VecParser:
@@ -148,11 +165,7 @@ if __name__ == '__main__':
     for p in paragraphs:
         parser_str.append(p.text)
 
-    parser.parse(parser_str)
-    parser.entity_extraction()
-    parser.relation_extraction()
-    print(parser.entity_dic)
-    print(parser.relation_dic)
+    parser.construct_graph("test", parser_str)
 
     # for i in range(len(seg)):
     #     seg_ent = seg[i]

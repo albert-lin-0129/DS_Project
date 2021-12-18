@@ -1,5 +1,6 @@
 from graphParser import GraphParser
 from ltp import LTP
+import entity
 
 
 def ltp_data():
@@ -83,21 +84,26 @@ def relation_extraction(sdp,nodes):
 
 
 if __name__ == '__main__':
-    sdp, pos, seg, ner, srl = ltp_data()
-    # print(sdp)
-    # print(pos)
-    # print(seg)
-    node_name, node_type = node_extraction(seg, pos)
-    nodes = []
-    for i in range(len(node_name)):
-        node = [node_type[i], node_name[i]]
-        nodes.append(node)
-    print(nodes)
-
-    rel = relation_extraction(sdp, nodes)
-    relations = []
-    for triple in rel:
-        relation = [triple[0], str(triple[2]), triple[1]]
-        relations.append(relation)
-    print(relations)
+    ent = entity.Entity()
+    dic = {"0": ent}
+    for x in dic:
+        print(x)
+        print(dic[x])
+    # sdp, pos, seg, ner, srl = ltp_data()
+    # # print(sdp)
+    # # print(pos)
+    # # print(seg)
+    # node_name, node_type = node_extraction(seg, pos)
+    # nodes = []
+    # for i in range(len(node_name)):
+    #     node = [node_type[i], node_name[i]]
+    #     nodes.append(node)
+    # print(nodes)
+    #
+    # rel = relation_extraction(sdp, nodes)
+    # relations = []
+    # for triple in rel:
+    #     relation = [triple[0], str(triple[2]), triple[1]]
+    #     relations.append(relation)
+    # print(relations)
 
