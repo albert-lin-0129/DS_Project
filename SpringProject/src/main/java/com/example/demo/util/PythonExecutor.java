@@ -20,7 +20,7 @@ public class PythonExecutor {
         try {
             ProcessBuilder processBuilder = new ProcessBuilder();
             List<String> command = new ArrayList<>();
-            command.add("python");
+            command.add("python3");
             command.add(scriptPath);
             Collections.addAll(command, args);
             processBuilder.command(command);

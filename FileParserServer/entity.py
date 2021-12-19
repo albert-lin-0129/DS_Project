@@ -16,6 +16,6 @@ class Entity:
         return "id: " + str(self.id) + ", name: " + self.name + ", category: " + self.category + ", tag: " + self.tag
 
     def to_dic(self):
-        dic = {"eid": self.id, "pid": self.p_id, "name": self.name, "type": self.tag,
+        dic = {"eid": self.id, "pid": self.p_id, "name": self.name, "type": "Character",
                "property": self.property}
         return dic

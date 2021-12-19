@@ -87,12 +87,12 @@ public class CommonImpl implements Common {
     }
 
     private HashMap<String, Object> stringToProp(String content) {
-        HashMap<String, Object> params = null;
-        try {
-            params = JSONObject.parseObject(content, HashMap.class);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        HashMap<String, Object> params = new HashMap<>();
+//        try {
+//            params = JSONObject.parseObject(content, HashMap.class);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
         return params;
     }
 

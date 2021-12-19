@@ -6,9 +6,13 @@ class JsonExporter:
     @staticmethod
     def export_json(json_path, project_list, node_list, relation_list):
         json_list = {"project": [], "entity_list": [], "relation_list": []}
+        cnt = 0
         for project in project_list:
             json_list["project"].append(project.to_dic())
         for node in node_list:
+            if cnt>50:
+                break
+            cnt+=1
             json_list["entity_list"].append(node.to_dic())
         for relation in relation_list:
             json_list["relation_list"].append(relation.to_dic())
