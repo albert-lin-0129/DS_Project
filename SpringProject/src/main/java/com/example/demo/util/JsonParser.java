@@ -100,7 +100,7 @@ public class JsonParser {
 //            Relation temp = new Relation();
 //            temp.setRid((Integer) key.get("rid"));
 //            temp.setHash_id(key.get("rid").toString());
-//            temp.setPid(2);
+//            temp.setPid((Integer) key.get("pid"));
 //            temp.setRelation((String) key.get("relation"));
 //            temp.setSource((String) key.get("source"));
 //            temp.setSource_id(key.get("source_id").toString());
