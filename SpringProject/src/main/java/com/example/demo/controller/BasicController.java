@@ -3,6 +3,8 @@ package com.example.demo.controller;
 import com.example.demo.bl.Common;
 import com.example.demo.bl.Iteration2Mod;
 import com.example.demo.util.AnalysisJSON;
+import com.example.demo.util.JsonParser;
+import com.example.demo.util.PythonExecutor;
 import com.example.demo.vo.IOKG;
 import com.example.demo.vo.ProjectVO;
 import com.example.demo.vo.ResponseVO;
@@ -103,7 +105,13 @@ public class BasicController {
         uploadFile.transferTo(newFile);
 
         //TODO
-
+        String[] inputArgs = new String[2];
+        inputArgs[0] = newFile.getAbsolutePath();
+//        inputArgs[0] = "D:/GitHub/Git/DSproject/SpringProject/src/main/resources/test.py";
+        inputArgs[1] = "0";
+        String s = PythonExecutor.execute("D:/GitHub/Git/DSproject/FileParserServer/graphParser.py", inputArgs);
+        System.out.println(s);
+        JsonParser.parseJson(inputArgs[0].replace(".docx", ".json"));
         return ResponseVO.buildSuccess();
     }
 

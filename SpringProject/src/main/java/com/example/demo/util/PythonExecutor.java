@@ -8,15 +8,20 @@ import java.util.List;
 
 public class PythonExecutor {
     public static void main(String[] args){
-
+        String[] inputArgs = new String[2];
+        inputArgs[0] = "D:/GitHub/Git/DSproject/FileParserServer/WPWPOI/files/test.docx";
+//        inputArgs[0] = "D:/GitHub/Git/DSproject/SpringProject/src/main/resources/test.py";
+        inputArgs[1] = "0";
+        String s = execute("D:/GitHub/Git/DSproject/FileParserServer/graphParser.py", inputArgs);
+        System.out.println(s);
     }
 
-    public static String execute(String filePath, String[] args){
+    public static String execute(String scriptPath, String[] args){
         try {
             ProcessBuilder processBuilder = new ProcessBuilder();
             List<String> command = new ArrayList<>();
             command.add("python");
-            command.add(filePath);
+            command.add(scriptPath);
             Collections.addAll(command, args);
             processBuilder.command(command);
             processBuilder.redirectErrorStream(true);
@@ -34,6 +39,7 @@ public class PythonExecutor {
             inputStream.close();
             return s.toString();
         } catch (Exception e) {
+            e.printStackTrace();
             return null;
         }
     }
