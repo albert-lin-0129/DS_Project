@@ -9,6 +9,7 @@ import entity
 import graph
 import relation
 import JsonStorage
+import sys
 
 pwd = os.path.dirname(__file__)
 DATA_FOLDER = os.path.join(pwd, 'WPWPOI/data')
@@ -138,8 +139,9 @@ class GraphParser:
     def relation_exception(self):
         pass
 
-    def construct_graph(self, g_name, parse_str):
+    def construct_graph(self, g_name, parse_str, g_id):
         self.graph.g_name = g_name
+        self.graph.id = g_id
         self.parse(parse_str)
         self.entity_extraction()
         self.relation_extraction()
@@ -160,10 +162,12 @@ class Word2VecParser:
 
 
 if __name__ == '__main__':
+    filePath = sys.argv[1]
+    p_id = int(sys.argv[2])
     utils = factory.Factory.get_docx()
     result = ""
 
-    filePath = os.path.join(UPLOAD_FOLDER, "test.docx")
+    # filePath = os.path.join(UPLOAD_FOLDER, "test.docx")
     # app.LoadFile.format_transfer(filePath)
     # filePath = filePath.split('.')[0] + ".docx"
     # print(filePath)
@@ -173,8 +177,8 @@ if __name__ == '__main__':
     parser_str = []
     for p in paragraphs:
         parser_str.append(p.text)
-    parser.construct_graph("test", parser_str)
-    JsonStorage.JsonExporter.export_json([parser.graph], parser.entity_dic.values(), parser.relation_dic.values())
+    parser.construct_graph("test", parser_str, p_id)
+    JsonStorage.JsonExporter.export_json(filePath.replace(".docx", ".json"), [parser.graph], parser.entity_dic.values(), parser.relation_dic.values())
 
     # for i in range(len(seg)):
     #     seg_ent = seg[i]
@@ -224,5 +228,4 @@ if __name__ == '__main__':
     # y_total = model_out.wv.most_similar("判决结果", topn=10)
     # for item in y_total:
     #     print(item[0], item[1])
-
 
