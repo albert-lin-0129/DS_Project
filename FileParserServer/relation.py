@@ -22,5 +22,5 @@ class Relation:
     def to_dic(self):
         dic = {"rid": self.id, "pid": self.p_id, "source_id": self.source_id,
                "target_id": self.target_id, "source": self.source, "target": self.target,
-               "relation": self.name, "type": "connection", "hash_id": self.hash_id}
+               "relation": self.name, "type": self.type, "hash_id": self.hash_id}
         return dic
