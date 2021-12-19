@@ -1,15 +1,15 @@
+import sys
+
 from ltp import LTP
 import os
 from gensim.models import Word2Vec
 from gensim.test.utils import datapath
-import app
 import gensim
 import factory
 import entity
 import graph
 import relation
 import JsonStorage
-import sys
 
 pwd = os.path.dirname(__file__)
 DATA_FOLDER = os.path.join(pwd, 'WPWPOI/data')
@@ -20,31 +20,14 @@ CUSTOM_DICT_FOLDER = os.path.join(pwd, 'CustomDict')
 class GraphParser:
 
     def __init__(self):
-        # 默认加载 Small 模型
         self.ltp = LTP()
         for f_name in os.listdir(CUSTOM_DICT_FOLDER):
             filePath = os.path.join(CUSTOM_DICT_FOLDER, f_name)
             self.ltp.init_dict(filePath)
-        # 分词 [['他', '叫', '汤姆', '去', '拿', '外衣', '。']]
         self.seg = []
-        # 词性标注 [['r', 'v', 'nh', 'v', 'v', 'n', 'wp']]
         self.pos = []
-        # 命名实体识别 [[('Nh', 2, 2)]]
         self.ner = []
-        # 语义角色标注 [[(1, [('ARG0', 0, 0), ('ARG1', 2, 2), ('ARG2', 3, 5)])]]
         self.srl = []
-        # 语义依存分析（图）
-        # [
-        #     [
-        #         (1, 2, 'Agt'),
-        #         (2, 0, 'Root'),   # 叫 --|Root|--> ROOT
-        #         (3, 2, 'Datv'),
-        #         (4, 2, 'eEfft'),
-        #         (5, 4, 'eEfft'),
-        #         (6, 5, 'Pat'),
-        #         (7, 2, 'mPunc')
-        #     ]
-        # ]
         self.sdp = []
         self.hidden = None
         self.relation_dic = {}
@@ -69,7 +52,7 @@ class GraphParser:
         # return dep
 
     def entity_extraction(self):
-        print("解析entity......")
+        print("entity......")
         for i in range(len(self.seg)):
             for j in range(len(self.seg[i])):
                 if self.pos[i][j] == "wp":
@@ -91,7 +74,7 @@ class GraphParser:
         #         tag, start, end = ent
 
     def relation_extraction(self):
-        print("解析relation......")
+        print("relation......")
         for i in range(len(self.srl)):
             for j in range(len(self.srl[i])):
                 rel = relation.Relation()
@@ -162,7 +145,7 @@ class Word2VecParser:
     def parse(train_file_name, save_model_file):
         model = Word2Vec(corpus_file=train_file_name, min_count=2)
         model.save(save_model_file + ".model")
-        # model.wv.save_word2vec_format(save_model_file + ".bin", binary=True)  # 以二进制类型保存模型以便重用
+        # model.wv.save_word2vec_format(save_model_file + ".bin", binary=True)
 
 
 if __name__ == '__main__':
@@ -172,6 +155,7 @@ if __name__ == '__main__':
     result = ""
 
     # filePath = os.path.join(UPLOAD_FOLDER, "test.docx")
+    # p_id = 0
     # app.LoadFile.format_transfer(filePath)
     # filePath = filePath.split('.')[0] + ".docx"
     # print(filePath)
@@ -184,52 +168,5 @@ if __name__ == '__main__':
     parser.construct_graph("test", parser_str, p_id)
     JsonStorage.JsonExporter.export_json(filePath.replace(".docx", ".json"), [parser.graph], parser.entity_dic.values(), parser.relation_dic.values())
 
-    # for i in range(len(seg)):
-    #     seg_ent = seg[i]
-    #     for j in range(len(seg_ent)):
-    #         print("(", seg[i][j], " - ", pos[i][j], ")", end=", ")
-    #     print()
-    # NLPParser.entity_extraction(seg, ner)
-    # NLPParser.relation_extraction(seg, srl)
-
-    # count = 0
-    # for f_name in os.listdir(UPLOAD_FOLDER):
-    #     if count == 200:
-    #         break
-    #     count += 1
-    #     filePath = os.path.join(DATA_FOLDER, f_name)
-    #     app.LoadFile.format_transfer(filePath)
-    #     filePath = filePath.split('.')[0] + ".docx"
-    #     print(filePath)
-    #     try:
-    #         file = utils.get_file(filePath)
-    #         paragraphs = utils.get_paragraphs(file)
-    #         parser = NLPParser()
-    #         for p in paragraphs:
-    #             result += NLPParser.parse(p.text) + "\n"
-    #     except:
-    #         pass
-
     entity = entity.Entity()
-
-    # segment_file_name = 'segment.txt'
-    # save_model_name = 'test'
-    # # with open(segment_file_name, 'w', encoding="utf-8") as f2:
-    # #     f2.write(result)
-    # #
-    # # Word2VecParser.parse(segment_file_name, save_model_name)
-    # model_out = Word2Vec.load(save_model_name + ".model")
-    # print(len(model_out.wv.vectors))
-    # # for data in model_out.wv.index_to_key:
-    # #     print(data)
-    # # 计算两个词的相似度/相关程度
-    # # y1 = model_out.wv.similarity("被告", "朱新梅")
-    # # y2 = model_out.wv.similarity("被告", "郭继兴")
-    # # print(y1)
-    # # print(y2)
-    # y = model_out.wv.n_similarity(["原告", "安慧敏"], ["被告", "崔冬茜"])
-    # print(y)
-    # y_total = model_out.wv.most_similar("判决结果", topn=10)
-    # for item in y_total:
-    #     print(item[0], item[1])
 

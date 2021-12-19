@@ -44,6 +44,8 @@ public class BasicController {
     Common common;
     @Autowired
     Iteration2Mod iteration2Mod;
+    @Autowired
+    JsonParser jsonParser;
 
     @PostMapping("/inputKG")
     @ApiImplicitParams(@ApiImplicitParam(name = "IOKG", value = "input knowledge graph", required = true, dataType = "IOKG"))
@@ -74,7 +76,7 @@ public class BasicController {
     @ApiOperation(value = "获取图谱", notes = "获取图谱")
     ResponseVO getKG(@RequestParam("pid") Integer pid){
         IOKG result = common.getKG(pid);
-        if (result == null || result.getEdges().length == 0 || result.getNodes().length == 0){
+        if (result == null || result.getNodes().length == 0){
             return ResponseVO.buildFailure("failed");
         }
         return ResponseVO.buildSuccess(result);
@@ -95,7 +97,7 @@ public class BasicController {
     @ApiImplicitParam(value = "上传文件")
     @ApiOperation(value = "上传文件", notes = "上传文件")
     ResponseVO uploadFile(@RequestParam("file") MultipartFile uploadFile) throws Exception {
-        String staticPath = "/Users/albert/Desktop/数据科学方向实践/DSproject/SpringProject/src/main/resources";
+        String staticPath = "/Users/albert/Desktop/DSproject/SpringProject/src/main/resources";
         File tempfolder = new File(staticPath + "/uploadFiles/");
         if (!tempfolder.isDirectory()) {
             tempfolder.mkdirs();
@@ -103,15 +105,6 @@ public class BasicController {
         String oldName = uploadFile.getOriginalFilename();
         File newFile = new File(tempfolder, oldName);
         uploadFile.transferTo(newFile);
-
-        //TODO
-        String[] inputArgs = new String[2];
-        inputArgs[0] = newFile.getAbsolutePath();
-//        inputArgs[0] = "D:/GitHub/Git/DSproject/SpringProject/src/main/resources/test.py";
-        inputArgs[1] = "0";
-        String s = PythonExecutor.execute("D:/GitHub/Git/DSproject/FileParserServer/graphParser.py", inputArgs);
-        System.out.println(s);
-        JsonParser.parseJson(inputArgs[0].replace(".docx", ".json"));
         return ResponseVO.buildSuccess();
     }
 
@@ -120,6 +113,17 @@ public class BasicController {
     @ApiOperation(value = "创建项目", notes = "创建项目")
     ResponseVO createProject(@RequestBody ProjectVO projectVO){
         int project_id = common.createProject(projectVO.getUid(), projectVO.getName());
+
+        String staticPath = "/Users/albert/Desktop/DSproject/SpringProject/src/main/resources/uploadFiles/";
+
+        String[] inputArgs = new String[2];
+        inputArgs[0] = staticPath + projectVO.getName();
+//        inputArgs[0] = "D:/GitHub/Git/DSproject/SpringProject/src/main/resources/test.py";
+        inputArgs[1] = project_id+"";
+        String s = PythonExecutor.execute("/Users/albert/Desktop/DSproject/FileParserServer/graphParser.py", inputArgs);
+        System.out.println(s);
+        jsonParser.parseJson(inputArgs[0].replace(".docx", ".json"));
+
         if (project_id <= 0) {
             return ResponseVO.buildFailure("创建失败");
         }
