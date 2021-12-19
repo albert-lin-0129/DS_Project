@@ -12,8 +12,18 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.ClassUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 
 /**
@@ -77,6 +87,24 @@ public class BasicController {
             return ResponseVO.buildFailure("创建失败");
         }
         return ResponseVO.buildSuccess(user_id);
+    }
+
+    @PostMapping("/uploadDocx")
+    @ApiImplicitParam(value = "上传文件")
+    @ApiOperation(value = "上传文件", notes = "上传文件")
+    ResponseVO uploadFile(@RequestParam("file") MultipartFile uploadFile) throws Exception {
+        String staticPath = "/Users/albert/Desktop/数据科学方向实践/DSproject/SpringProject/src/main/resources";
+        File tempfolder = new File(staticPath + "/uploadFiles/");
+        if (!tempfolder.isDirectory()) {
+            tempfolder.mkdirs();
+        }
+        String oldName = uploadFile.getOriginalFilename();
+        File newFile = new File(tempfolder, oldName);
+        uploadFile.transferTo(newFile);
+
+        //TODO
+
+        return ResponseVO.buildSuccess();
     }
 
     @PostMapping("/createProject")
