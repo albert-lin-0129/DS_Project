@@ -95,6 +95,7 @@ class GraphParser:
         for i in range(len(self.srl)):
             for j in range(len(self.srl[i])):
                 rel = relation.Relation()
+                rel.p_id = self.graph.id
                 rel.name = self.seg[i][self.srl[i][j][0]]
                 for ent in self.srl[i][j][1]:
                     tag, start, end = ent
@@ -108,12 +109,14 @@ class GraphParser:
                             rel.target = self.entity_dic[key].name
                     else:
                         continue
-                    self.relation_dic[rel.id] = rel
+                    if rel.the_first_e_id == 0 or rel.the_second_e_id == 0:
+                        self.relation_dic[rel.id] = rel
 
         for i in range(len(self.sdp)):
             for j in range(len(self.sdp[i])):
                 start, end, tag = self.sdp[i][j]
                 rel = relation.Relation()
+                rel.p_id = self.graph.id
                 rel.name = tag
                 if tag.lower() == "root":
                     continue
@@ -124,7 +127,8 @@ class GraphParser:
                     rel.the_second_e_id = self.entity_dic[key].id
                 else:
                     continue
-                self.relation_dic[rel.id] = rel
+                if rel.the_first_e_id == 0 or rel.the_second_e_id == 0:
+                    self.relation_dic[rel.id] = rel
 
         for rel_key in self.relation_dic.keys():
             if self.entity_dic.__contains__(rel_key):
