@@ -9,6 +9,13 @@ class Entity:
         self.name = ""
         self.category = ""
         self.tag = ""
+        self.p_id = 0
+        self.property = ""
 
     def __str__(self):
         return "id: " + str(self.id) + ", name: " + self.name + ", category: " + self.category + ", tag: " + self.tag
+
+    def to_dic(self):
+        dic = {"eid": self.id, "pid": self.p_id, "name": self.name, "type": self.tag,
+               "property": self.property}
+        return dic

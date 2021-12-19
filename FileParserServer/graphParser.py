@@ -8,11 +8,13 @@ import factory
 import entity
 import graph
 import relation
+import JsonStorage
 
 pwd = os.path.dirname(__file__)
 DATA_FOLDER = os.path.join(pwd, 'WPWPOI/data')
 UPLOAD_FOLDER = os.path.join(pwd, 'WPWPOI/files')
 CUSTOM_DICT_FOLDER = os.path.join(pwd, 'CustomDict')
+
 
 class GraphParser:
 
@@ -76,6 +78,7 @@ class GraphParser:
                 tag = self.pos[i][j]
                 entity_obj.name = name
                 entity_obj.tag = tag
+                entity_obj.p_id = self.graph.id
                 self.entity_dic[name] = entity_obj
                 # tag, start, end = ent
                 # rel = relation.Relation()
@@ -97,9 +100,11 @@ class GraphParser:
                     key = self.seg[i][start]
                     if self.entity_dic.__contains__(key):
                         if tag == "A0":
-                            rel.the_first_e_id = self.entity_dic[key].id
+                            rel.source_id = self.entity_dic[key].id
+                            rel.source = self.entity_dic[key].name
                         if tag == "A1":
-                            rel.the_second_e_id = self.entity_dic[key].id
+                            rel.target_id = self.entity_dic[key].id
+                            rel.target = self.entity_dic[key].name
                     else:
                         continue
                     self.relation_dic[rel.id] = rel
@@ -134,12 +139,10 @@ class GraphParser:
         pass
 
     def construct_graph(self, g_name, parse_str):
+        self.graph.g_name = g_name
         self.parse(parse_str)
         self.entity_extraction()
         self.relation_extraction()
-        self.graph.g_name = g_name
-        self.graph.entity = self.entity_dic
-        self.relation_dic = self.relation_dic
         # for entity_key in parser.entity_dic:
         #     print(str(entity_key) + ": " + str(parser.entity_dic[entity_key]))
         # for relation_key in parser.relation_dic:
@@ -170,8 +173,8 @@ if __name__ == '__main__':
     parser_str = []
     for p in paragraphs:
         parser_str.append(p.text)
-
     parser.construct_graph("test", parser_str)
+    JsonStorage.JsonExporter.export_json([parser.graph], parser.entity_dic.values(), parser.relation_dic.values())
 
     # for i in range(len(seg)):
     #     seg_ent = seg[i]
