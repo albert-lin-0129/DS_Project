@@ -164,21 +164,21 @@ public class AnalysisJSON {
         positionMapper.truncateAllPositions(pid);
     }
 
-    private void addConfigurationFiles() {
+    public void addConfigurationFiles() {
         List<Entity> entities = entityMapper.getAllEntities();
         List<Relation> relations = relationMapper.getAllRelations();
 
         HashSet<String> entityHashSet = new HashSet<>();
         HashSet<String> relationHashSet = new HashSet<>();
-        HashSet<String> properties = new HashSet<>();
+//        HashSet<String> properties = new HashSet<>();
 
         for (Entity e : entities) {
 
-            JSONObject jsonObject = JSONObject.parseObject(e.getProperty());
+//            JSONObject jsonObject = JSONObject.parseObject(e.getProperty());
 
-            for (Map.Entry me : jsonObject.entrySet()) {
-                properties.add((String) me.getKey());
-            }
+//            for (Map.Entry me : jsonObject.entrySet()) {
+//                properties.add((String) me.getKey());
+//            }
             entityHashSet.add(e.getName());
         }
         for (Relation r : relations) {
@@ -188,7 +188,7 @@ public class AnalysisJSON {
         try {
             writeConfigurations(entityHashSet, "characters.txt");
             writeConfigurations(relationHashSet, "relations.txt");
-            writeConfigurations(properties, "property.txt");
+//            writeConfigurations(properties, "property.txt");
 
         } catch (Exception e) {
             e.printStackTrace();
