@@ -23,7 +23,6 @@ CUSTOM_DICT_FOLDER = os.path.join(pwd, 'CustomDict')
 class GraphParser:
 
     def __init__(self):
-        self.ltp = LTP()
         # 默认加载 Small 模型
         self.ltp = LTP(device="cpu")
         for f_name in os.listdir(CUSTOM_DICT_FOLDER):
@@ -162,7 +161,7 @@ if __name__ == '__main__':
     # filePath = os.path.join(UPLOAD_FOLDER, "test.docx")
     # p_id = 0
     filePath = os.path.join(UPLOAD_FOLDER, "test.docx")
-    p_id = 1
+    p_id = 2
     # app.LoadFile.format_transfer(filePath)
     # filePath = filePath.split('.')[0] + ".docx"
     # print(filePath)

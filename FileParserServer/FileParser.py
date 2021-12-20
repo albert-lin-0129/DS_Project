@@ -300,7 +300,7 @@ def extractor_ltp(file_string, p_id):
 
     new_graph = graph.Graph()
     new_graph.id = p_id
-    root_entity = new_graph.add_entity("Root", "Root")
+    root_entity = new_graph.add_entity("法案", "Root")
 
     name_list = {}  # 载入实体名 避免重复载入
 
@@ -324,6 +324,8 @@ def extractor_ltp(file_string, p_id):
         for index in range(len(seg)):
             first_word = seg[0]
             word = seg[index]
+            if word in name_list.keys():
+                refered_entity = name_list[word]
             # if word in ["，", "。", "", " ", "(", ")"]:
             #     continue
             if state == 0 and pos_list[seg_ind][index] == "ns":
@@ -380,6 +382,7 @@ def extractor_ltp(file_string, p_id):
                     else:
                         b_search_name = False
                         b_search_location = False
+
                 if entity_name != "" and entity_name not in name_list:
                     target_entity = new_graph.add_entity(entity_name, "nh")
                     new_graph.add_relation(word, root_entity, target_entity)
@@ -431,18 +434,36 @@ def extractor_ltp(file_string, p_id):
                     for key in entity_info_dic.keys():
                         new_entity = new_graph.add_entity(entity_info_dic[key], "n")
                         new_graph.add_relation(key, target_entity, new_entity)
-            # if state == 3 and word in ["给付", "赔偿"]:
-            #     while index + 1 < len(seg):
-            #         index = index + 1
-            #         money_type = ""
-            #         money_num = ""
-            #         if seg[index].endswith("费") or seg[index] in ["合计", "共"]:
-            #             money_type = seg[index]
-            #         elif pos_list[seg_ind][index] == "m":
-            #             money_num = seg[index]
-            #         elif seg[index] in ["元", "人民币"]:
-            #             new_entity = new_graph.add_entity(entity_info_dic[key], "n")
-            #             new_graph.add_relation(key, root_entity, new_entity)
+            if state == 3 and word in ["给付", "赔偿"]:
+                money_type = ""
+                money_num = ""
+                while index + 1 < len(seg):
+                    index = index + 1
+                    if seg[index].endswith("费") or seg[index] in ["合计", "共"]:
+                        money_type = seg[index]
+                    elif pos_list[seg_ind][index] == "m":
+                        money_num = seg[index]
+                    elif seg[index] in ["元", "人民币"] and money_num != "" and money_type != "":
+                        new_entity_type = new_graph.add_entity(money_type, "n")
+                        new_entity_count = new_graph.add_entity(money_num + seg[index], "n")
+                        if refered_entity is not None:
+                            new_graph.add_relation("赔偿", refered_entity, new_entity_type)
+                        else:
+                            new_graph.add_relation("赔偿", root_entity, new_entity_type)
+                        new_graph.add_relation("共计", new_entity_type, new_entity_count)
+            if state == 3 and word == "《":
+                b_seach_law_name = True
+                law_name = ""
+                # law_num_temp = ""
+                while index + 1 < len(seg):
+                    index = index + 1
+                    if seg[index] == "》":
+                        b_seach_law_name = False
+                    elif b_seach_law_name:
+                        law_name += seg[index]
+                    new_entity_type = new_graph.add_entity(law_name, "n")
+                    new_graph.add_relation("相关法条", root_entity, new_entity_type)
+                    break
     return new_graph
 
 

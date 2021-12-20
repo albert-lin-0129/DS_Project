@@ -8,12 +8,9 @@ class Entity:
 
         self.name = _name
         self.category = ""
-        self.tag = ""
-        self.p_id = 0
         self.property = "{}"
         self.tag = _tag
         self.p_id = p_id
-        self.property = ""
 
     def __str__(self):
         return "id: " + str(self.id) + ", name: " + self.name + ", category: " + self.category + ", tag: " + self.tag
