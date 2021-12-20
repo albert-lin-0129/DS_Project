@@ -452,18 +452,17 @@ def extractor_ltp(file_string, p_id):
                             new_graph.add_relation("赔偿", root_entity, new_entity_type)
                         new_graph.add_relation("共计", new_entity_type, new_entity_count)
             if state == 3 and word == "《":
-                b_seach_law_name = True
                 law_name = ""
                 # law_num_temp = ""
                 while index + 1 < len(seg):
                     index = index + 1
                     if seg[index] == "》":
-                        b_seach_law_name = False
-                    elif b_seach_law_name:
+                        new_entity_type = new_graph.add_entity(law_name, "n")
+                        new_graph.add_relation("相关法条", root_entity, new_entity_type)
+                        break
+                    else:
                         law_name += seg[index]
-                    new_entity_type = new_graph.add_entity(law_name, "n")
-                    new_graph.add_relation("相关法条", root_entity, new_entity_type)
-                    break
+
     return new_graph
 
 
