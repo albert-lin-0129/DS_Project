@@ -2,11 +2,11 @@ spring:
   application:
     name: SpringbootDemo
   datasource:
-    url: jdbc:mysql://localhost:3306/seiii
-    username: root
-    password: aLBERT831500
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    platform: mysql
+    username: visitor
+    password: mysql@irbl
+    url: jdbc:mysql://101.132.253.222:3306/seiii
+    driver-class-name: com.mysql.jdbc.Driver
+#    platform: mysql
     schema: classpath:schema.sql
     data: classpath:data.sql
 #    在Spring2:x版本中需加上此行6:

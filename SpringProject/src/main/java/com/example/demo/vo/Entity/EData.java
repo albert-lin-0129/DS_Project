@@ -26,7 +26,7 @@ public class EData {
         this.name = name;
         this.id = id;
         this.type = type;
-        this.property = (HashMap<String, Object>) property.clone();
+//        this.property = (HashMap<String, Object>) property.clone();
     }
 
     public String getName() {
