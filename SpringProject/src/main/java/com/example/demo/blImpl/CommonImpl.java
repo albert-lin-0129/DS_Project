@@ -10,6 +10,7 @@ import com.example.demo.po.Entity;
 import com.example.demo.po.Position;
 import com.example.demo.po.Relation;
 import com.example.demo.po.User;
+import com.example.demo.util.AnalysisJSON;
 import com.example.demo.vo.Entity.EData;
 import com.example.demo.vo.Entity.EntityVO;
 import com.example.demo.vo.Entity.PositionVO;
@@ -37,6 +38,8 @@ public class CommonImpl implements Common {
     PositionMapper positionMapper;
     @Autowired
     UserMapper userMapper;
+    @Autowired
+    AnalysisJSON analysisJSON;
 
     @Override
     public IOKG getKG(Integer pid) {
@@ -82,6 +85,8 @@ public class CommonImpl implements Common {
         IOKG ioKG = new IOKG();
         ioKG.setEdges(arr2);
         ioKG.setNodes(arr1);
+
+        analysisJSON.addConfigurationFiles();
 
         return ioKG;
     }
