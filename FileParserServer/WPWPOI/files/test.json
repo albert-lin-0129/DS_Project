@@ -1,0 +1,326 @@
+{
+    "project": [
+        {
+            "id": 1,
+            "uid": 1,
+            "name": ""
+        }
+    ],
+    "entity_list": [
+        {
+            "eid": 0,
+            "pid": 1,
+            "name": "Root",
+            "type": "Root",
+            "property": ""
+        },
+        {
+            "eid": 1,
+            "pid": 1,
+            "name": "天津市北辰区人民法院",
+            "type": "ns",
+            "property": ""
+        },
+        {
+            "eid": 2,
+            "pid": 1,
+            "name": "民 事判 决 书",
+            "type": "ns",
+            "property": ""
+        },
+        {
+            "eid": 3,
+            "pid": 1,
+            "name": "〔2012〕辰民初字第3033号",
+            "type": "ns",
+            "property": ""
+        },
+        {
+            "eid": 4,
+            "pid": 1,
+            "name": "朱新梅",
+            "type": "nh",
+            "property": ""
+        },
+        {
+            "eid": 5,
+            "pid": 1,
+            "name": "女",
+            "type": "n",
+            "property": ""
+        },
+        {
+            "eid": 6,
+            "pid": 1,
+            "name": "",
+            "type": "n",
+            "property": ""
+        },
+        {
+            "eid": 7,
+            "pid": 1,
+            "name": "土家族",
+            "type": "n",
+            "property": ""
+        },
+        {
+            "eid": 8,
+            "pid": 1,
+            "name": "湖北省鹤峰县燕子乡桃山村二组2号",
+            "type": "n",
+            "property": ""
+        },
+        {
+            "eid": 9,
+            "pid": 1,
+            "name": "郭继兴",
+            "type": "nh",
+            "property": ""
+        },
+        {
+            "eid": 10,
+            "pid": 1,
+            "name": "男",
+            "type": "n",
+            "property": ""
+        },
+        {
+            "eid": 11,
+            "pid": 1,
+            "name": "",
+            "type": "n",
+            "property": ""
+        },
+        {
+            "eid": 12,
+            "pid": 1,
+            "name": "汉族",
+            "type": "n",
+            "property": ""
+        },
+        {
+            "eid": 13,
+            "pid": 1,
+            "name": "天津市北辰区大张庄镇北孙庄村南新村16号",
+            "type": "n",
+            "property": ""
+        },
+        {
+            "eid": 14,
+            "pid": 1,
+            "name": "中国平安财产保险股份有限公司天津分公司",
+            "type": "nh",
+            "property": ""
+        },
+        {
+            "eid": 15,
+            "pid": 1,
+            "name": "天津市南开区白堤路1号",
+            "type": "n",
+            "property": ""
+        },
+        {
+            "eid": 16,
+            "pid": 1,
+            "name": "王然",
+            "type": "nh",
+            "property": ""
+        },
+        {
+            "eid": 17,
+            "pid": 1,
+            "name": "周成柱",
+            "type": "nh",
+            "property": ""
+        }
+    ],
+    "relation_list": [
+        {
+            "rid": 0,
+            "pid": 1,
+            "source_id": 0,
+            "target_id": 1,
+            "source": "Root",
+            "target": "天津市北辰区人民法院",
+            "relation": "审理法院",
+            "type": "",
+            "hash_id": 0
+        },
+        {
+            "rid": 1,
+            "pid": 1,
+            "source_id": 0,
+            "target_id": 2,
+            "source": "Root",
+            "target": "民 事判 决 书",
+            "relation": "文书类型",
+            "type": "",
+            "hash_id": 1
+        },
+        {
+            "rid": 2,
+            "pid": 1,
+            "source_id": 0,
+            "target_id": 3,
+            "source": "Root",
+            "target": "〔2012〕辰民初字第3033号",
+            "relation": "文书编号",
+            "type": "",
+            "hash_id": 2
+        },
+        {
+            "rid": 3,
+            "pid": 1,
+            "source_id": 0,
+            "target_id": 4,
+            "source": "Root",
+            "target": "朱新梅",
+            "relation": "原告",
+            "type": "",
+            "hash_id": 3
+        },
+        {
+            "rid": 4,
+            "pid": 1,
+            "source_id": 4,
+            "target_id": 5,
+            "source": "朱新梅",
+            "target": "女",
+            "relation": "性别",
+            "type": "",
+            "hash_id": 4
+        },
+        {
+            "rid": 5,
+            "pid": 1,
+            "source_id": 4,
+            "target_id": 6,
+            "source": "朱新梅",
+            "target": "",
+            "relation": "生日",
+            "type": "",
+            "hash_id": 5
+        },
+        {
+            "rid": 6,
+            "pid": 1,
+            "source_id": 4,
+            "target_id": 7,
+            "source": "朱新梅",
+            "target": "土家族",
+            "relation": "民族",
+            "type": "",
+            "hash_id": 6
+        },
+        {
+            "rid": 7,
+            "pid": 1,
+            "source_id": 4,
+            "target_id": 8,
+            "source": "朱新梅",
+            "target": "湖北省鹤峰县燕子乡桃山村二组2号",
+            "relation": "住址",
+            "type": "",
+            "hash_id": 7
+        },
+        {
+            "rid": 8,
+            "pid": 1,
+            "source_id": 0,
+            "target_id": 9,
+            "source": "Root",
+            "target": "郭继兴",
+            "relation": "被告",
+            "type": "",
+            "hash_id": 8
+        },
+        {
+            "rid": 9,
+            "pid": 1,
+            "source_id": 9,
+            "target_id": 10,
+            "source": "郭继兴",
+            "target": "男",
+            "relation": "性别",
+            "type": "",
+            "hash_id": 9
+        },
+        {
+            "rid": 10,
+            "pid": 1,
+            "source_id": 9,
+            "target_id": 11,
+            "source": "郭继兴",
+            "target": "",
+            "relation": "生日",
+            "type": "",
+            "hash_id": 10
+        },
+        {
+            "rid": 11,
+            "pid": 1,
+            "source_id": 9,
+            "target_id": 12,
+            "source": "郭继兴",
+            "target": "汉族",
+            "relation": "民族",
+            "type": "",
+            "hash_id": 11
+        },
+        {
+            "rid": 12,
+            "pid": 1,
+            "source_id": 9,
+            "target_id": 13,
+            "source": "郭继兴",
+            "target": "天津市北辰区大张庄镇北孙庄村南新村16号",
+            "relation": "住址",
+            "type": "",
+            "hash_id": 12
+        },
+        {
+            "rid": 13,
+            "pid": 1,
+            "source_id": 0,
+            "target_id": 14,
+            "source": "Root",
+            "target": "中国平安财产保险股份有限公司天津分公司",
+            "relation": "被告",
+            "type": "",
+            "hash_id": 13
+        },
+        {
+            "rid": 14,
+            "pid": 1,
+            "source_id": 14,
+            "target_id": 15,
+            "source": "中国平安财产保险股份有限公司天津分公司",
+            "target": "天津市南开区白堤路1号",
+            "relation": "住址",
+            "type": "",
+            "hash_id": 14
+        },
+        {
+            "rid": 15,
+            "pid": 1,
+            "source_id": 0,
+            "target_id": 16,
+            "source": "Root",
+            "target": "王然",
+            "relation": "负责人",
+            "type": "",
+            "hash_id": 15
+        },
+        {
+            "rid": 16,
+            "pid": 1,
+            "source_id": 0,
+            "target_id": 17,
+            "source": "Root",
+            "target": "周成柱",
+            "relation": "审判员",
+            "type": "",
+            "hash_id": 16
+        }
+    ]
+}
