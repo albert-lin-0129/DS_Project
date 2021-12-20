@@ -4,12 +4,15 @@ from ltp import LTP
 import os
 from gensim.models import Word2Vec
 from gensim.test.utils import datapath
+# import app
 import gensim
 import factory
 import entity
 import graph
 import relation
 import JsonStorage
+import sys
+from FileParser import run
 
 pwd = os.path.dirname(__file__)
 DATA_FOLDER = os.path.join(pwd, 'WPWPOI/data')
@@ -21,6 +24,8 @@ class GraphParser:
 
     def __init__(self):
         self.ltp = LTP()
+        # 默认加载 Small 模型
+        self.ltp = LTP(device="cpu")
         for f_name in os.listdir(CUSTOM_DICT_FOLDER):
             filePath = os.path.join(CUSTOM_DICT_FOLDER, f_name)
             self.ltp.init_dict(filePath)
@@ -156,17 +161,22 @@ if __name__ == '__main__':
 
     # filePath = os.path.join(UPLOAD_FOLDER, "test.docx")
     # p_id = 0
+    filePath = os.path.join(UPLOAD_FOLDER, "test.docx")
+    p_id = 1
     # app.LoadFile.format_transfer(filePath)
     # filePath = filePath.split('.')[0] + ".docx"
     # print(filePath)
-    file = utils.get_file(filePath)
-    paragraphs = utils.get_paragraphs(file)
-    parser = GraphParser()
-    parser_str = []
-    for p in paragraphs:
-        parser_str.append(p.text)
-    parser.construct_graph("test", parser_str, p_id)
-    JsonStorage.JsonExporter.export_json(filePath.replace(".docx", ".json"), [parser.graph], parser.entity_dic.values(), parser.relation_dic.values())
+    # file = utils.get_file(filePath)
+    # paragraphs = utils.get_paragraphs(file)
+    # parser = GraphParser()
+    # parser_str = []
+    # for p in paragraphs:
+    #     parser_str.append(p.text)
+    # parser.construct_graph("test", parser_str, p_id)
+    graph = run(filePath, p_id)
+    # JsonStorage.JsonExporter.export_json(filePath.replace(".docx", ".json"), [parser.graph], parser.entity_dic.values(), parser.relation_dic.values())
+    JsonStorage.JsonExporter.export_json(filePath.replace(".docx", ".json"), [graph], graph.entity_dic.values(),
+                                         graph.relation_dic.values())
 
     entity = entity.Entity()
 
